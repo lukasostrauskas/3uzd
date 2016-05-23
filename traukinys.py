@@ -1,8 +1,11 @@
-class lokomotyvas:
-    mase
+import vagonas, lokomotyvas
+
+class traukinys:
+
+    sastatas = [None]
     
+    def pasirinkti_lokomotyva(lokomotyvas):
+        self.sastatas[0] = lokomotyvas
     
-    def __str__(self):
-        return self;
-    
-    
+    def pridetiVagona(vagonas):    
+        self.vagonai.append(vagonas)

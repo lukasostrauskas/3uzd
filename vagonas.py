@@ -1,9 +1,8 @@
 class vagonas:
-    
-    self_m          #savita_mase
-    load_m           #krovinio_mase
-    max_load_m          #max_krovinio_mase
-    uid             #unikalus kodas
+    self_m = None         #savita_mase
+    load_m = None          #krovinio_mase
+    max_load_m = None         #max_krovinio_mase
+    uid = None            #unikalus kodas
     
     def __str__(self):
         return self.uid
