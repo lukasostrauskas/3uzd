@@ -5,7 +5,11 @@ class vagonas:
     uid = None            #unikalus kodas
     
     def __str__(self):
-        return self.uid
+        return str(self.uid)
+        
+    def __repr__(self):
+        
+        return str(self.uid)
     
     def __init__(self, no, smass, lmass, mlmass):
         self.uid = no
