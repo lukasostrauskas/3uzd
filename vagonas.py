@@ -1,8 +1,25 @@
 class vagonas:
-    self_m = None         #savita_mase
-    load_m = None          #krovinio_mase
-    max_load_m = None         #max_krovinio_mase
-    uid = None            #unikalus kodas
+    """
+    Vagonas turi savo mase, krovinio mase, maksimalia krovinio mase
+    ir unikalu identifikacini numeri
+    """
+    self_m = None         
+    load_m = None          
+    max_load_m = None         
+    uid = None            
+    
+    
+    def getMass(self):
+        return self.self_m
+        
+    def getLoadMass(self):
+        return self.load_m
+        
+    def getMaxLoadMass(self):
+        return self.max_load_m
+    
+    def getId(self):
+        return uid
     
     def __str__(self):
         return str(self.uid)

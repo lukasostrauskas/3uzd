@@ -5,9 +5,9 @@ class traukinys:
     visa_mase = 0
     sastatas = [None]
     
-    def pasirinkti_lokomotyva(self, lokomotyvas):
+    def pasirinktiLokomotyva(self, lokomotyvas):
         self.sastatas[0] = lokomotyvas
-        self.visa_mase = self.visa_mase + lokomotyvas.mass
+        self.visa_mase = self.visa_mase + lokomotyvas.getMass()
         return self
         
     def pridetiVagona(self, vagonas):    
@@ -24,22 +24,16 @@ class traukinys:
         return self.sastatas
         
     def getMass(self):
-        return self.mass
+        return self.visa_mase
         
     def getStatus(self):
         lok = self.sastatas[0]        
         if lok.pull_m > self.visa_mase :
             return "Traukinys gali vaziuoti"
         else:
-            return "Traukinys negali vaziuoti, lokomotyvo maksimali tempiama mase per maza kroviniui % < %" % (lok.pull_m, self.visa_mase)
-    ####perkelti i maina ^^^^^########
-    def __repr__(self):
-        #representation = "<text>"
-        """
-        representation = self.sastatas[0]
-        for i in range (1, len(sastatas)):
-            representation.append(" Vagonas nr. ", i, "---", repr(sastatas[i])) 
-        """
+            return "Traukinys negali vaziuoti, sastatas per sunkus lokomotyvui!"
+ 
+    def __repr__(self):        
         return self.name
     
     def __str__(self):
@@ -48,17 +42,27 @@ class traukinys:
     def __init__(self, name):
         self.name = name
         
-    def __add__():
-        pass
-    
-    def __sub__():
-        pass
+    def __len__(self, sastatas):
+        return len(sastatas)
         
+    def __add__(self, other):
+        self.sastatas.append(other.sastatas[1:])
+        self.visa_mase = self.visa_mase 
+                       + other.visa_mase 
+                       - other.sastatas[0].getMass
+    
+    def __sub__(self, other):
+        for el in other.sastatas:
+            if el in self.sastatas:
+                self.sastatas.remove[el]
+                self.visa_mase = self.visa_mase 
+                               - el.load_m 
+                               - el.self_m
+                            
+            
     def __bool__():
         lok = self.sastatas[0]        
-        if lok.pull_m > self.visa_mase :
+        if lok.pull_m > self.visa_mase:
             return True
         else:
             return False
-    
-        

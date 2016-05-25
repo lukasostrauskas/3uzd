@@ -1,33 +1,78 @@
+import sys 
+import json
 from vagonas import vagonas
 from lokomotyvas import lokomotyvas
 from traukinys import traukinys
-import sys
+from customExcp import ZeroOrLess, ExistantId
 
-"""
-def check_input(int):
-    pass
-"""    
+def checkIdInput(text):
+    """
+    Patikrina ar ID unikalus tarp visu vagonu ir lokomotyvu
+    """
+    while True:
+        try:        
+            n = input(text)
+            
+            if type(n) is not str:
+                raise ValueError
+            
+            for l in l_list:
+                if str(l) == n:
+                    raise ExistantId  
+            
+            for v in v_list:
+                if str(v) == n:
+                    raise ExistantId              
+                
+            break
+        except ValueError:
+            print("ID turetu buti sudarytas is raidziu ir skaiciu,",
+                  "bei buti validi simboliu eilute")
+            
+        except ExistantId:    
+            print("Sis ID jau naudojamas vagono ar lokomotyvo",
+                  ", iveskite kita!")
+    return n
+
+def checkInput(text):
+    """
+    Tikrina ivesti, kad visi vartotojo ivesti duomenys 
+    butu sviekieji didesni uz nuli
+    """
+    while True:
+        try:        
+            n = input(text)
+            n = int(n)
+            if n <= 0:
+                raise ZeroOrLess
+            break
+        except ValueError:
+            print("Ivestas skaicius nera sveikasis, bandykite dar karta.")
+        except ZeroOrLess:    
+            print("Ivestas sveikasis skaicius negali buti mazesnis ", 
+                  "ar lygus nuliui!")
+    return n   
 
 def naujas_traukinys():
-    t = traukinys()
-    t = keisti_sastata(t)
+    
+    t = traukinys(checkIdInput("Iveskite naujo traukinio pavadinima: "))
     return t
 
 def naujas_lokomotyvas():
-    a = int(input("Iveskite lokomotyvo mase: "))
-    b = int(input("Iveskite maksimalia lokomotyvo traukiama mase: "))
-    c = input("Iveskite lokomotyvo identifikacini koda: ")
+    a = checkIdInput("Iveskite lokomotyvo identifikacini koda: ")    
+    b = checkInput("Iveskite lokomotyvo mase: ")
+    c = checkInput("Iveskite maksimalia lokomotyvo traukiama mase: ")
+                
     l = lokomotyvas(a, b, c)    
     return l
     
 def naujas_vagonas():
-    a = input("Iveskite vagono identifikacini koda: ")
-    b = int(input("Iveskite vagono savitaja mase: "))
-    c = int(input("Iveskite krovinio mase: "))
-    d = int(input("Iveskite maksimalia krovinio mase: "))
+    a = checkIdInput("Iveskite vagono identifikacini koda: ")
+    b = checkInput("Iveskite vagono savitaja mase: ")
+    c = checkInput("Iveskite krovinio mase: ")
+    d = checkInput("Iveskite maksimalia krovinio mase: ")
     v = vagonas(a, b, c, d)
-    return v
-         
+    return v         
     
 def perziureti_traukinius():
     print("#----Traukiniu sarasas-------#")
@@ -40,7 +85,8 @@ def pasirinkti_traukini(current_train):
     for i in range(0, len(t_list)):
         print(i+1, " --- ", t_list[i])
         
-    print("0 - palikti esama traukini, 1 - ", len(t_list), " pasirinkti is saraso")
+    print("0 - palikti esama traukini, 1 - ", len(t_list), 
+          " pasirinkti is saraso")
     t_no = int(input())
     if t_no == 0:
         return current_train 
@@ -58,14 +104,16 @@ def keisti_sastata(current_train):
         
         if a == 1:
             print(l_list)
-            print("0 - palikti esama lokomotyva, 1 - ", len(l_list), " pasirinkti is saraso")
+            print("0 - palikti esama lokomotyva, 1 - ", len(l_list), 
+                  " pasirinkti is saraso")
             l_no = int(input()) - 1
-            ct = current_train.pasirinkti_lokomotyva(l_list[l_no])
+            ct = current_train.pasirinktiLokomotyva(l_list[l_no])
             return ct
             
         if a == 2:
             print(v_list)
-            print("0 - neprideti ne vieno vagono, 1 - ", len(v_list), " pasirinkti is saraso")
+            print("0 - neprideti ne vieno vagono, 1 - ", len(v_list), 
+                  " pasirinkti is saraso")
             v_no = int(input()) - 1
             ct = current_train.pridetiVagona(v_list[v_no])
             return ct
@@ -74,7 +122,8 @@ def keisti_sastata(current_train):
             sarasas = current_train.getSastatas()
             for i in sarasas[1:]:
                     print("Vagono id: ", i)  
-            print("0 - neatimti ne vieno vagono, 1 - ", len(sarasas[1:]), " pasirinkti is saraso")
+            print("0 - neatimti ne vieno vagono, 1 - ", len(sarasas[1:]), 
+                  " pasirinkti is saraso")
             v_no = int(input())
             ct = current_train.atkabintiVagona(v_no)
             return ct
@@ -89,21 +138,87 @@ def rusiuoti_traukinius(t_list):
     t_list.sort(key=lambda traukinys: traukinys.visa_mase)
     return t_list
             
-def write_to_file():
-    pass
-    
+def write_to_file(t_list, v_list, l_list):
+    """
+    Irasymas i traukiniai.json
+    """
+    with open('traukiniai.json', 'w') as outfile:
+        
+        for l in l_list:
+            string_list = [str(l) , l.getMass(), l.getPullMass()]
+            temp = {"lokomotyvas": string_list}          
+            json.dump(temp,  outfile)
+            outfile.write("\n")
+
+        for v in v_list:
+            string_list = [
+                    str(v), 
+                    v.getMass(), 
+                    v.getLoadMass(), 
+                    v.getMaxLoadMass()
+                    ]  
+            temp = {"vagonas": string_list}     
+            json.dump(temp, outfile)
+            outfile.write("\n")
+                
+        for t in t_list:
+            train = [str(t)]            
+            for el in t.sastatas:            
+                train.append(str(el))            
+            temp = {"traukinys": train}
+            json.dump(temp, outfile)
+            outfile.write("\n")
+       
 def read_from_file():
-    pass
+    """
+    Traukiniai.json nuskaitymas
+    """
+    v_list = []
+    l_list = []
+    t_list = []
+    data = []    
+    try:
+        with open('traukiniai.json', 'r') as infile:
+            for line in infile:
+                data.append(json.loads(line))
+        
+        for item in data:
+            for value in item:
+                if value == "vagonas":
+                    v = vagonas(
+                        item[value][0],
+                        item[value][1], 
+                        item[value][2], 
+                        item[value][3]
+                        )
+                    v_list.append(v)
+                if value == "lokomotyvas":
+                    l = lokomotyvas(
+                        item[value][0], 
+                        item[value][1], 
+                        item[value][2]
+                        )
+                    l_list.append(l)
+                if value == "traukinys":
+                    t = traukinys(item[value][0])
+                    
+                    for l in l_list:
+                        if str(item[value][1]) == str(l):
+                            t.pasirinktiLokomotyva(l)
+                        
+                    for i in range (2, len(item[value])):
+                        for v in v_list:
+                            if str(v) == str(item[value][i]):
+                                t.pridetiVagona(v)
+                        
+                    t_list.append(t)
+    except: print("Failas traukiniai.json nerastas programos aplanke!")
+    return t_list, l_list, v_list
             
-################# MAIN ##################        
 t_list = []
 l_list = []
 v_list = []
 current_train = None
-t_list.append(traukinys("Butaforija"))
-######pakeisim i json nuskaityma#########
-v_list.append(vagonas(1, 20, 50, 50))
-l_list.append(lokomotyvas(20, 100, "1Z"))
 
 main_menu_text = [
             "Perziureti traukinius", 
@@ -113,8 +228,8 @@ main_menu_text = [
             "Naujas traukinys", 
             "Naujas lokomotyvas", 
             "Naujas vagonas",
-            "Issaugoti ##neveikia", 
-            "Ikelti issaugotus ##neveikia",
+            "Ikelti issaugotus",
+            "Issaugoti",             
             "Iseiti"
             ]
                    
@@ -131,7 +246,9 @@ while True:
             print("Sis sastatas dar neturi parinkto lokomotyvo")
         else:
             print(current_train.getStatus())
-            print("Lokmotyvas: ", sarasas[0])
+            print("Lokomotyvas: ", sarasas[0])
+            print("Mase: ", sarasas[0].getPullMass(), " / ", 
+                  current_train.getMass())
             
         if len(sarasas) == 1:
             print("Sio traukinio sastatas dar nenustatytas")
@@ -139,14 +256,12 @@ while True:
             for i in sarasas[1:]:
                 print("Vagono id: ", i)            
         
-        ###printinsim viska apie traukini###
     print("#----------------------------------------------#")
     for i in range(0, len(main_menu_text)):        
         print(i+1,"---", main_menu_text[i])
     print("#----------------------------------------------#")
     a = int(input("Pasirinkite: "))
-    ####paklausti gal yra geresnis control flow? Ideja: objektai, manageriai. Funkcijos pasiima ka reikia is objektu kurie saugoja duomenis. 
-    #<- naudojam dict pasiekt funkcijom, jas kvieciam be parametru.
+
     if a == 1:
         perziureti_traukinius()
     
@@ -157,8 +272,11 @@ while True:
         current_train = pasirinkti_traukini(current_train)
     
     if a == 4:
-        current_train = keisti_sastata(current_train)
-    
+        if current_train != None:
+            current_train = keisti_sastata(current_train)
+        else:
+            print("Nepasirinktas traukinys!")
+            
     if a == 5:
         t_list.append(naujas_traukinys())
         
@@ -167,6 +285,15 @@ while True:
         
     if a == 7:
         v_list.append(naujas_vagonas())
+    
+    if a == 8:
+        t_list, l_list, v_list = read_from_file()
         
     if a == 9:
-        sys.exit()        
+        write_to_file(t_list, v_list, l_list)
+        
+    if a == 10:
+        sys.exit()
+    
+    
+        

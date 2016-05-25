@@ -1,12 +1,18 @@
 class lokomotyvas:
-    mass = None #mase
-    pull_m = None #traukos mase
-    id = None #id
+    """
+    Lokomotyvas - turi savo mase, max tempiama mase, ir unikalu id
+    """
+    mass = None 
+    pull_m = None 
+    id = None 
     
-    def get_pull_m(self):
+    def getMass(self):
+        return self.mass
+    
+    def getPullMass(self):
         return self.pull_m
     
-    def __init__(self, mass, pull_m, id):
+    def __init__(self, id, mass, pull_m):
         self.mass = mass
         self.pull_m = pull_m
         self.id = id
@@ -16,6 +22,3 @@ class lokomotyvas:
     
     def __repr__(self):
         return self.id
-        
-        
-        
